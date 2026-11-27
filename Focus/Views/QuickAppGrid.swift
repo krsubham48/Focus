@@ -3,9 +3,11 @@ import SwiftUI
 
 struct QuickAppGrid: View {
     let model: FocusModel
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
+        let count = typeSize.isAccessibilitySize ? 2 : 3
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: count), spacing: 12) {
             ForEach(QuickApp.allCases) { app in
                 Button {
                     Task { await model.open(app) }

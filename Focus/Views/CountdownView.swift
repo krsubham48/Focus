@@ -11,6 +11,11 @@ struct CountdownView: View {
         return total > 0 ? model.remaining / total : 0
     }
 
+    private var spokenRemaining: String {
+        let seconds = Int(model.remaining.rounded(.up))
+        return "\(FocusText.minutes(seconds / 60)) \(seconds % 60) seconds remaining"
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -37,6 +42,7 @@ struct CountdownView: View {
                         .lineLimit(1)
                         .padding(28)
                         .accessibilityIdentifier("countdown-time")
+                        .accessibilityLabel(spokenRemaining)
                 }
                 .frame(width: 260, height: 260)
                 if let session = model.session {

@@ -8,6 +8,7 @@ struct HomeView: View {
     @State private var remindersDenied = false
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openURL) private var openURL
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     init(model: FocusModel) {
         self.model = model
@@ -24,6 +25,13 @@ struct HomeView: View {
         let today = Stats.day(.now, history: model.data.history, calendar: .current)
         guard today.completed > 0 else { return "Today: no sessions yet" }
         return "Today: \(FocusText.sessions(today.completed)) · \(FocusText.shortDuration(today.focusMinutes))"
+    }
+
+    /// Fewer, wider columns at the largest text sizes, so labels are not cut off.
+    private var columns: [GridItem] {
+        typeSize.isAccessibilitySize
+            ? Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
+            : [GridItem(.adaptive(minimum: 76), spacing: 12)]
     }
 
     var body: some View {
@@ -45,7 +53,7 @@ struct HomeView: View {
                         .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 14))
                     }
                     Text("How long?").font(.title3.weight(.medium))
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 76), spacing: 12)], spacing: 12) {
+                    LazyVGrid(columns: columns, spacing: 12) {
                         ForEach(SessionRules.presets, id: \.self) { preset in
                             LengthButton(title: SessionRules.presetLabel(preset), selected: minutes == preset) {
                                 minutes = preset
