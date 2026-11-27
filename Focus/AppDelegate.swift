@@ -7,6 +7,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         UNUserNotificationCenter.current().delegate = self
+        // Created now so it already knows about calls the first time the user leaves.
+        _ = AppEnvironment.watcher
         return true
     }
 

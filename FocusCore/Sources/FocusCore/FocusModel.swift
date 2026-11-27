@@ -7,6 +7,8 @@ import Observation
 public final class FocusModel {
     public private(set) var data: FocusData
     public private(set) var now: Date
+    /// False while the saved file cannot be read. Nothing is saved until it can.
+    public private(set) var isLoaded = false
     public var showGuardBanner = false
     public var openFailureMessage: String?
     public let vault: PINVault
@@ -31,10 +33,9 @@ public final class FocusModel {
         self.activity = activity
         self.secondsPerMinute = secondsPerMinute
         self.clock = clock
-        data = store.load()
+        data = FocusData()
         now = clock()
-        // A session may have ended while the app was closed.
-        if data.settle(now: now) != nil { sessionCompleted() }
+        loadIfNeeded()
     }
 
     public var session: ActiveSession? { data.active }
@@ -64,6 +65,7 @@ public final class FocusModel {
 
     public func tick() {
         now = clock()
+        loadIfNeeded()
         // Only assign when a session actually ends, so screens are not redrawn for nothing.
         guard let session = data.active, now >= session.endsAt else { return }
         data.settle(now: now)
@@ -82,6 +84,8 @@ public final class FocusModel {
 
     public func becameActive() {
         tick()
+        // Without the file, an empty state must not end a countdown that may still be running.
+        guard isLoaded else { return }
         leavingForQuickApp = false
         notifier.cancel(ids: ReminderPlan.nudgeIDs)
         if let session { activity.show(session) } else { activity.end() }
@@ -138,7 +142,16 @@ public final class FocusModel {
         showGuardBanner = false
     }
 
+    private func loadIfNeeded() {
+        guard !isLoaded, let saved = try? store.read() else { return }
+        data = saved
+        isLoaded = true
+        // A session may have ended while the app was closed.
+        if data.settle(now: now) != nil { sessionCompleted() }
+    }
+
     private func save() {
+        guard isLoaded else { return }
         try? store.save(data)
     }
 }

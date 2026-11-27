@@ -143,4 +143,22 @@ final class TestClock: @unchecked Sendable {
         try model.quitEarly()
         #expect(!model.showGuardBanner)
     }
+
+    /// After a restart, before the first unlock, iOS cannot read the app's files.
+    @Test func aFileThatCannotBeReadAtLaunchIsNeverOverwritten() throws {
+        try makeModel().start(minutes: 20)
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: url.path)
+        let model = makeModel()
+        #expect(!model.isLoaded)
+        model.finishOnboarding()
+        model.guardTriggered()
+        try FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: url.path)
+        #expect(FocusStore(url: url).load().active != nil)
+        model.becameActive()
+        #expect(model.isLoaded && model.session != nil && activity.shown == model.session)
+    }
+
+    @Test func noFileYetCountsAsLoaded() {
+        #expect(makeModel().isLoaded)
+    }
 }

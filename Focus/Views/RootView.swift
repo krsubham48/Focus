@@ -16,7 +16,10 @@ struct RootView: View {
     }
 
     @ViewBuilder private var content: some View {
-        if !model.data.onboarded {
+        if !model.isLoaded {
+            // The saved file cannot be read yet. The clock loop tries again.
+            Color(.systemBackground)
+        } else if !model.data.onboarded {
             OnboardingView(model: model)
         } else if let record = model.completedSession {
             DoneView(model: model, record: record)
