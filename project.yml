@@ -1,0 +1,77 @@
+name: Focus
+options:
+  bundleIdPrefix: io.github.krsubham48
+  deploymentTarget:
+    iOS: "26.0"
+configFiles:
+  Debug: Config/Signing.xcconfig
+  Release: Config/Signing.xcconfig
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+packages:
+  FocusCore:
+    path: FocusCore
+targets:
+  Focus:
+    type: application
+    platform: iOS
+    sources: [Focus]
+    dependencies:
+      - package: FocusCore
+      - target: FocusWidgets
+    info:
+      path: Focus/Info.plist
+      properties:
+        CFBundleDisplayName: Focus
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSSupportsLiveActivities: true
+        NSFaceIDUsageDescription: Confirm it's you before resetting your Focus PIN.
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.krsubham48.focus
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  FocusWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - FocusWidgets
+      - Focus/Assets.xcassets
+    dependencies:
+      - package: FocusCore
+    info:
+      path: FocusWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Focus
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.krsubham48.focus.widgets
+  FocusUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [FocusUITests]
+    dependencies:
+      - target: Focus
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.krsubham48.focus.uitests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Focus:
+    build:
+      targets:
+        Focus: all
+        FocusUITests: [test]
+    test:
+      targets: [FocusUITests]
