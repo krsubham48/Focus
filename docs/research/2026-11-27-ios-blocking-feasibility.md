@@ -69,7 +69,18 @@ Fallbacks for Phone and Camera: a dialer inside Focus that places calls with `te
 - Extensions run apart from the app and share state through an App Group.
 - No new blocking APIs were found for iOS 27 (not verified against release notes).
 
-## Check on a real iPhone before building
+## Without the paid program (the chosen route)
+
+- **Confirmed:** free accounts get App Groups, background modes, data protection and keychain sharing, but not Family Controls, push, Time Sensitive Notifications or Siri.
+- **Reported:** installs expire after 7 days, with at most 3 such apps on a phone and 10 new App IDs a week.
+- **Confirmed (SDK):** on iOS 26 an App Intent with `supportedModes = [.background, .foreground(.dynamic)]` can call `continueInForeground(alwaysConfirm: false)`, so a Shortcuts action opens its app only when needed.
+- **Reported:** this drives guards from an "app is opened" automation ([write-up](https://dev.to/eliguzz/building-an-open-source-one-sec-alternative-breaking-the-shortcuts-infinite-loop-thanks-to-ios-26-ka4), [repo](https://github.com/tombastianmueller03/controlyourflow), the latter not yet device-tested). The built app must contain `Metadata.appintents`. The guarded app shows briefly first.
+- **Reported:** app-opened automations stopped firing after a restart on iOS 26.6 ([report](https://pcglance.com/ios-26-6-shortcuts-automation-broken/)).
+- **Unverified:** whether a Live Activity extension signs and runs on a free account.
+- **Reported:** the protected-data signal can indicate a lock, but may be late and needs a passcode.
+- **Design evidence:** [field study of the one sec app](https://pmc.ncbi.nlm.nih.gov/articles/PMC9974409).
+
+## Check on a real iPhone if blocking is added later
 
 1. Phone, FaceTime, Messages, Safari, Camera, WhatsApp, Spotify and Music appear in the picker.
 2. With shields on, those apps stay usable, calls come through and music keeps playing.
