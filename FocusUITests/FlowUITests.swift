@@ -25,6 +25,35 @@ final class FlowUITests: XCTestCase {
         XCTAssertTrue(app.buttons["start"].waitForExistence(timeout: 5))
     }
 
+    private func answerSum(in app: XCUIApplication) {
+        let parts = app.staticTexts["sum-text"].label.split(separator: " ")
+        let (a, b) = (Int(parts[0])!, Int(parts[2])!)
+        type(String(parts[1] == "+" ? a + b : a - b), in: app)
+        app.buttons["key-enter"].tap()
+    }
+
+    func testOverrideNeedsPINFiveSumsConfirmationAndPINAgain() {
+        let app = launch("ready")
+        app.buttons["preset-20"].tap()
+        app.buttons["start"].tap()
+        app.buttons["override"].tap()
+        type("1234567890", in: app)
+        for _ in 0..<5 { answerSum(in: app) }
+        app.buttons["confirm-yes"].tap()
+        type("1234567890", in: app)
+        XCTAssertTrue(app.buttons["start"].waitForExistence(timeout: 5))
+    }
+
+    func testTimeRunningOutClosesOverride() {
+        let app = launch("ready", extra: ["FOCUS_SECONDS_PER_MINUTE": "3"])
+        app.buttons["preset-5"].tap()
+        app.buttons["start"].tap()
+        app.buttons["override"].tap()
+        XCTAssertTrue(app.buttons["override-cancel"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["override-cancel"].waitForNonExistence(timeout: 30))
+        XCTAssertFalse(app.staticTexts["countdown-time"].exists)
+    }
+
     private func type(_ digits: String, in app: XCUIApplication) {
         for digit in digits { app.buttons["key-\(digit)"].tap() }
     }

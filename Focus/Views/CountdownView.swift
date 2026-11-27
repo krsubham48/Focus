@@ -3,6 +3,7 @@ import SwiftUI
 
 struct CountdownView: View {
     @Bindable var model: FocusModel
+    @State private var showingOverride = false
 
     private var fractionLeft: Double {
         guard let session = model.session else { return 0 }
@@ -43,7 +44,7 @@ struct CountdownView: View {
                         .foregroundStyle(.secondary)
                 }
                 QuickAppGrid(model: model)
-                Button("Override") {}
+                Button("Override") { showingOverride = true }
                     .frame(minWidth: 44, minHeight: 44)
                     .accessibilityIdentifier("override")
             }
@@ -51,6 +52,9 @@ struct CountdownView: View {
             .frame(maxWidth: .infinity)
         }
         .scrollBounceBehavior(.basedOnSize)
+        .fullScreenCover(isPresented: $showingOverride) {
+            OverrideView(model: model)
+        }
         .alert(
             model.openFailureMessage ?? "",
             isPresented: Binding(
