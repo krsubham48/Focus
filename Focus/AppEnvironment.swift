@@ -9,6 +9,7 @@ enum AppTab: String {
 @MainActor
 enum AppEnvironment {
     static let model = makeModel()
+    static let watcher = DeviceWatcher()
 
     static var initialTab: AppTab {
         #if DEBUG
@@ -26,7 +27,7 @@ enum AppEnvironment {
         let silent = SilentPlatform()
         return FocusModel(
             store: .standard, vault: PINVault(store: KeychainStore()),
-            notifier: silent, opener: URLOpener(), activity: silent)
+            notifier: UserNotifier(), opener: URLOpener(), activity: silent)
     }
 
     #if DEBUG
