@@ -5,6 +5,9 @@ struct HomeView: View {
     let model: FocusModel
     @State private var minutes: Int
     @State private var choosingCustom = false
+    @State private var remindersDenied = false
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
 
     init(model: FocusModel) {
         self.model = model
@@ -27,6 +30,20 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    if remindersDenied {
+                        HStack {
+                            Text("Reminders are off.")
+                            Spacer()
+                            Button("Turn on") {
+                                if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
+                                    openURL(url)
+                                }
+                            }
+                            .frame(minHeight: 44)
+                        }
+                        .padding(.horizontal)
+                        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 14))
+                    }
                     Text("How long?").font(.title3.weight(.medium))
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 76), spacing: 12)], spacing: 12) {
                         ForEach(SessionRules.presets, id: \.self) { preset in
@@ -63,6 +80,9 @@ struct HomeView: View {
                 .padding()
             }
             .navigationTitle("Focus")
+            .task(id: scenePhase) {
+                remindersDenied = await NotificationStatus.current() == .denied
+            }
             .sheet(isPresented: $choosingCustom) {
                 CustomDurationSheet(minutes: $minutes)
                     .presentationDetents([.medium])

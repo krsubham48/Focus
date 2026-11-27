@@ -14,12 +14,7 @@ struct MainTabView: View {
                 StatsView(model: model)
             }
             Tab("Settings", systemImage: "gearshape.fill", value: AppTab.settings) {
-                NavigationStack {
-                    List {
-                        NavigationLink("App guard") { GuardGuideView(model: model) }
-                    }
-                    .navigationTitle("Settings")
-                }
+                SettingsView(model: model)
             }
         }
     }

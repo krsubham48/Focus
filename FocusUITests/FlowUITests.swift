@@ -67,6 +67,23 @@ final class FlowUITests: XCTestCase {
         snapshot("stats")
     }
 
+    func testAChangedPINIsTheOneOverrideAsksFor() {
+        let app = launch("ready")
+        app.tabBars.buttons["Settings"].tap()
+        app.buttons["change-pin"].tap()
+        type("1234567890", in: app)
+        type("0987654321", in: app)
+        type("0987654321", in: app)
+        app.tabBars.buttons["Focus"].tap()
+        app.buttons["preset-20"].tap()
+        app.buttons["start"].tap()
+        app.buttons["override"].tap()
+        type("1234567890", in: app)
+        XCTAssertFalse(app.staticTexts["sum-text"].exists)
+        type("0987654321", in: app)
+        XCTAssertTrue(app.staticTexts["sum-text"].waitForExistence(timeout: 5))
+    }
+
     private func type(_ digits: String, in app: XCUIApplication) {
         for digit in digits { app.buttons["key-\(digit)"].tap() }
     }
