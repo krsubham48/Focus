@@ -1,6 +1,6 @@
 # Focus: design
 
-Draft for approval, 2026-11-27. Items marked **(call)** were not requested. They are proposals that can be changed.
+Approved 2026-11-27 (native iOS app, installed directly from Xcode). Items marked **(call)** were not requested. They are proposals that can be changed.
 
 ## Why
 
