@@ -16,7 +16,9 @@ struct RootView: View {
     }
 
     @ViewBuilder private var content: some View {
-        if model.session != nil {
+        if !model.data.onboarded {
+            OnboardingView(model: model)
+        } else if model.session != nil {
             CountdownView(model: model)
         } else {
             MainTabView(model: model)
