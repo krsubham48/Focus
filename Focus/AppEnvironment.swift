@@ -24,10 +24,9 @@ enum AppEnvironment {
         #if DEBUG
         if ProcessInfo.processInfo.environment["FOCUS_UITEST"] == "1" { return makeTestModel() }
         #endif
-        let silent = SilentPlatform()
         return FocusModel(
             store: .standard, vault: PINVault(store: KeychainStore()),
-            notifier: UserNotifier(), opener: URLOpener(), activity: silent)
+            notifier: UserNotifier(), opener: URLOpener(), activity: LiveActivityController())
     }
 
     #if DEBUG
