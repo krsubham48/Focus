@@ -14,7 +14,12 @@ struct MainTabView: View {
                 NavigationStack { Color.clear.navigationTitle("Stats") }
             }
             Tab("Settings", systemImage: "gearshape.fill", value: AppTab.settings) {
-                NavigationStack { Color.clear.navigationTitle("Settings") }
+                NavigationStack {
+                    List {
+                        NavigationLink("App guard") { GuardGuideView(model: model) }
+                    }
+                    .navigationTitle("Settings")
+                }
             }
         }
     }

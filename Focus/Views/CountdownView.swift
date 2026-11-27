@@ -13,6 +13,19 @@ struct CountdownView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
+                if model.showGuardBanner {
+                    Button {
+                        model.showGuardBanner = false
+                    } label: {
+                        Text("Stay with it. \(FocusText.minutes(FocusText.minutesLeft(model.remaining))) left.")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .padding(.horizontal)
+                            .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 14))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint("Hides this message")
+                }
                 Text("Stay focused").font(.title2.weight(.semibold))
                 ZStack {
                     ProgressRing(fraction: fractionLeft)
