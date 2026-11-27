@@ -18,6 +18,8 @@ struct RootView: View {
     @ViewBuilder private var content: some View {
         if !model.data.onboarded {
             OnboardingView(model: model)
+        } else if let record = model.completedSession {
+            DoneView(model: model, record: record)
         } else if model.session != nil {
             CountdownView(model: model)
         } else {

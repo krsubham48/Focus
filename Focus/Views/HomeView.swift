@@ -17,6 +17,12 @@ struct HomeView: View {
         "Start " + (minutes < 60 ? FocusText.minutes(minutes) : FocusText.shortDuration(minutes))
     }
 
+    private var todayText: String {
+        let today = Stats.day(.now, history: model.data.history, calendar: .current)
+        guard today.completed > 0 else { return "Today: no sessions yet" }
+        return "Today: \(FocusText.sessions(today.completed)) · \(FocusText.shortDuration(today.focusMinutes))"
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -50,6 +56,9 @@ struct HomeView: View {
                     .buttonStyle(.borderedProminent)
                     .accessibilityIdentifier("start")
                     .padding(.top, 12)
+                    Text(todayText)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
                 }
                 .padding()
             }

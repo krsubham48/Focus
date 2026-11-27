@@ -11,7 +11,7 @@ struct MainTabView: View {
                 HomeView(model: model)
             }
             Tab("Stats", systemImage: "chart.bar.fill", value: AppTab.stats) {
-                NavigationStack { Color.clear.navigationTitle("Stats") }
+                StatsView(model: model)
             }
             Tab("Settings", systemImage: "gearshape.fill", value: AppTab.settings) {
                 NavigationStack {

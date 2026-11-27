@@ -42,6 +42,8 @@ final class FlowUITests: XCTestCase {
         app.buttons["confirm-yes"].tap()
         type("1234567890", in: app)
         XCTAssertTrue(app.buttons["start"].waitForExistence(timeout: 5))
+        app.tabBars.buttons["Stats"].tap()
+        XCTAssertTrue(app.staticTexts["1 quit early"].waitForExistence(timeout: 5))
     }
 
     func testTimeRunningOutClosesOverride() {
@@ -52,6 +54,17 @@ final class FlowUITests: XCTestCase {
         XCTAssertTrue(app.buttons["override-cancel"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["override-cancel"].waitForNonExistence(timeout: 30))
         XCTAssertFalse(app.staticTexts["countdown-time"].exists)
+    }
+
+    func testAFinishedSessionShowsDoneAndCountsInStats() {
+        let app = launch("ready", extra: ["FOCUS_SECONDS_PER_MINUTE": "3"])
+        app.buttons["preset-1"].tap()
+        app.buttons["start"].tap()
+        XCTAssertTrue(app.staticTexts["Done. You focused for 1 minute."].waitForExistence(timeout: 20))
+        app.buttons["done-close"].tap()
+        app.tabBars.buttons["Stats"].tap()
+        XCTAssertTrue(app.staticTexts["stats-total"].label.contains("1 session"))
+        snapshot("stats")
     }
 
     private func type(_ digits: String, in app: XCUIApplication) {
